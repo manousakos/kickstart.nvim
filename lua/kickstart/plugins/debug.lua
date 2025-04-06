@@ -23,10 +23,16 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'mfussenegger/nvim-dap-python',
+    'microsoft/vscode-node-debug',
   },
   keys = function(_, keys)
     local dap = require 'dap'
     local dapui = require 'dapui'
+
+    -- vim.keymap.set("n", "<space>?", function()
+    --   require("dapui").eval( nil, {enter = true})
+    -- end )
     return {
       -- Basic debugging keymaps, feel free to change to your liking!
       { '<F5>', dap.continue, desc = 'Debug: Start/Continue' },
@@ -34,6 +40,13 @@ return {
       { '<F2>', dap.step_over, desc = 'Debug: Step Over' },
       { '<F3>', dap.step_out, desc = 'Debug: Step Out' },
       { '<leader>b', dap.toggle_breakpoint, desc = 'Debug: Toggle Breakpoint' },
+      {
+        '<leader>?',
+        function()
+          require('dapui').eval(nil, { enter = true })
+        end,
+        desc = 'Debug: Show var under cursor',
+      },
       {
         '<leader>B',
         function()
@@ -64,6 +77,7 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'python',
       },
     }
 
@@ -99,6 +113,26 @@ return {
         -- On Windows delve must be run attached or it crashes.
         -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
         detached = vim.fn.has 'win32' == 0,
+      },
+    }
+    require('dap-python').setup '/home/testuser/Documents/python_Testing/pytests/bin/python'
+    require('dap').adapters['pwa-node'] = {
+      type = 'server',
+      host = 'localhost',
+      port = '${port}',
+      executable = {
+        command = 'node',
+        -- 💀 Make sure to update this path to point to your installation
+        args = { '/home/testuser/Documents/Debug-Servers/js-debug/src/dapDebugServer.js', '${port}' },
+      },
+    }
+    require('dap').configurations.javascript = {
+      {
+        type = 'pwa-node',
+        request = 'launch',
+        name = 'Launch file',
+        program = '${file}',
+        cwd = '${workspaceFolder}',
       },
     }
   end,
