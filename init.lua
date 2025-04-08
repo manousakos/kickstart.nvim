@@ -146,7 +146,99 @@ vim.opt.scrolloff = 10
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+local function open_floating_file()
+  local file_path = '/home/testuser/.config/nvim/doc/manousos_notes.md'
+  -- Create a new buffer (listed and modifiable)
+  local buf = vim.api.nvim_create_buf(false, false)
+  if not buf then
+    return
+  end
 
+  -- Read file content into a table of lines
+  local lines = {}
+  local f = io.open(file_path, 'w')
+  if f then
+    for line in f:lines() do
+      table.insert(lines, line)
+    end
+    f:close()
+  else
+    vim.notify('File not found: ' .. file_path, vim.log.levels.ERROR)
+    return
+  end
+
+  -- Set the buffer's lines to the file content
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+  -- Optionally, set filetype (adjust as necessary)
+  vim.api.nvim_set_option_value('filetype', 'txt', { buf = buf })
+
+  -- Define dimensions and position for the floating window
+  local width = math.floor(vim.o.columns * 0.5)
+  local height = math.floor(vim.o.lines * 0.5)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local opts = {
+    style = 'minimal',
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    border = 'rounded',
+  }
+
+  -- Open the floating window with the buffer
+  vim.api.nvim_open_win(buf, true, opts)
+end
+-- open_floating_file()
+-- vim.keymap.set('n', '<leader>n', function()
+--   local file_path = '/path/to/your/file.txt' -- change this to your file
+--   -- Create a new buffer (listed and modifiable)
+--   local buf = vim.api.nvim_create_buf(false, false)
+--   if not buf then
+--     return
+--   end
+--
+--   -- Read file content into a table of lines using vim.fn.readfile
+--   local lines = vim.fn.readfile(file_path)
+--   if not lines or #lines == 0 then
+--     vim.notify('File not found or empty: ' .. file_path, vim.log.levels.ERROR)
+--     return
+--   end
+--
+--   -- Set the buffer's lines to the file content
+--   vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+--   -- Set filetype using the updated API function
+--   vim.api.nvim_set_option_value('filetype', 'txt', { buf = buf })
+--
+--   -- Define dimensions and position for the floating window
+--   local width = math.floor(vim.o.columns * 0.5)
+--   local height = math.floor(vim.o.lines * 0.5)
+--   local row = math.floor((vim.o.lines - height) / 2)
+--   local col = math.floor((vim.o.columns - width) / 2)
+--
+--   local opts = {
+--     style = 'minimal',
+--     relative = 'editor',
+--     width = width,
+--     height = height,
+--     row = row,
+--     col = col,
+--     border = 'rounded',
+--   }
+--
+--   -- Open the floating window with the buffer
+--   vim.api.nvim_open_win(buf, true, opts)
+--   -- create_flo
+-- end)
+local notesPlugin = require 'plugins.notesPlugin'
+
+vim.api.nvim_create_user_command('OpenNotes', function()
+  notesPlugin.create_floating_window()
+end, {})
+
+vim.api.nvim_set_keymap('n', '<leader>n', ':OpenNotes<CR>', { noremap = true, silent = true })
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')

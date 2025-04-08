@@ -1,2 +1,0 @@
-# Manousos' notes
-
