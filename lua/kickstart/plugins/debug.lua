@@ -40,6 +40,7 @@ return {
       { '<F2>', dap.step_over, desc = 'Debug: Step Over' },
       { '<F3>', dap.step_out, desc = 'Debug: Step Out' },
       { '<leader>b', dap.toggle_breakpoint, desc = 'Debug: Toggle Breakpoint' },
+      { '<leader>mt', dap.terminate, desc = 'Debug: Terminate DAP' },
       {
         '<leader>?',
         function()
@@ -115,7 +116,7 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
-    require('dap-python').setup '/home/testuser/Documents/python_Testing/pytests/bin/python'
+    require('dap-python').setup '/home/manis/Documents/pyTests/debugPy/venvDebug/bin/python'
     require('dap').adapters['pwa-node'] = {
       type = 'server',
       host = 'localhost',

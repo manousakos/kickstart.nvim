@@ -4,17 +4,20 @@ function M.hello()
   print 'hello nigga'
 end
 
+Note_buf = nil
+
 function M.create_floating_window()
-  if enter == nil then
-    enter = false
+  if Note_buf == nil then
+    Note_buf = vim.api.nvim_create_buf(false, true) -- No file, scratch buffer
   end
 
   local buf = vim.api.nvim_create_buf(false, true) -- No file, scratch buffer
-  local win = vim.api.nvim_open_win(buf, true, { relative = 'win', row = 3, col = 3, height = 5, width = 12 })
+  -- vim.api.nvim_buf_call(buf, function()
+  --   vim.cmd 'edit ~/.config/nvim/manousos_notes.md'
+  -- end)
+  local win = vim.api.nvim_open_win(buf, true, { relative = 'win', row = 0, col = 0, height = 30, width = 100, border = 'rounded' })
+
   -- local wow = vim.api.nvim_open_win
-  vim.api.nvim_buf_call(buf, function()
-    vim.cmd 'edit ~/.config/nvim/manousos_notes.md'
-  end)
 
   return { buf = buf, win = win }
 end

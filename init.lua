@@ -236,9 +236,18 @@ local notesPlugin = require 'plugins.notesPlugin'
 
 vim.api.nvim_create_user_command('OpenNotes', function()
   notesPlugin.create_floating_window()
+  vim.cmd ':e ~/.config/nvim/manousos_notes.md'
 end, {})
 
-vim.api.nvim_set_keymap('n', '<leader>n', ':OpenNotes<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>nn', ':OpenNotes<CR>', { desc = 'Open Notes.md', noremap = true, silent = true })
+
+local ollamaWin = require 'plugins.quickOllama'
+vim.api.nvim_create_user_command('OllamaWin', function()
+  ollamaWin.create_floating_term()
+  vim.cmd ':te ollama run qwen2.5-coder:3b' --- WANRING you must have ollama alias if you are using it in a docker container
+end, {})
+
+vim.api.nvim_set_keymap('n', '<leader>no', ':OllamaWin<CR>', { desc = 'Ollama float terminal', noremap = true, silent = true })
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
