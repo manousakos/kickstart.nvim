@@ -39,6 +39,7 @@ return {
       { '<F1>', dap.step_into, desc = 'Debug: Step Into' },
       { '<F2>', dap.step_over, desc = 'Debug: Step Over' },
       { '<F3>', dap.step_out, desc = 'Debug: Step Out' },
+      { '<leader>nt', dap.terminate, desc = 'Debug: Terminate Debug Session' },
       { '<leader>b', dap.toggle_breakpoint, desc = 'Debug: Toggle Breakpoint' },
       { '<leader>mt', dap.terminate, desc = 'Debug: Terminate DAP' },
       {
