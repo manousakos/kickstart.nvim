@@ -232,8 +232,19 @@ end
 --   vim.api.nvim_open_win(buf, true, opts)
 --   -- create_flo
 -- end)
-local notesPlugin = require 'plugins.notesPlugin'
 
+-- AutoCMD for cursor color change n light themes
+vim.api.nvim_create_autocmd('ColorScheme', {
+  callback = function()
+    if vim.o.background == 'light' then
+      local cursorPlugin = require 'plugins.cursor_color_lush'
+      cursorPlugin.cursor()
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd('ColorScheme', o)
+local notesPlugin = require 'plugins.notesPlugin'
 vim.api.nvim_create_user_command('OpenNotes', function()
   notesPlugin.create_floating_window()
   vim.cmd ':e ~/.config/nvim/manousos_notes.md'
@@ -251,6 +262,19 @@ vim.api.nvim_set_keymap('n', '<leader>no', ':OllamaWin<CR>', { desc = 'Ollama fl
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+vim.api.nvim_create_user_command('Vt', function()
+  vim.cmd ':vs'
+  vim.cmd ':te'
+end, {})
+
+vim.api.nvim_create_user_command('St', function()
+  vim.cmd ':sp'
+  vim.cmd ':te'
+end, {})
+
+vim.keymap.set('n', '<leader>tv', ':Vt', { desc = 'Open Vertical Window with terminal' })
+vim.keymap.set('n', '<leader>ts', ':St', { desc = 'Open Horizontal Window below with terminal' })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -352,8 +376,34 @@ require('lazy').setup({
     lazy = false,
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
-      require 'github-theme'
-      vim.cmd 'colorscheme github_dark_default'
+      -- require 'github-theme'
+      -- vim.cmd 'colorscheme github_dark_default'
+    end,
+  },
+  {
+    'zenbones-theme/zenbones.nvim',
+    -- Optionally install Lush. Allows for more configuration or extending the colorscheme
+    -- If you don't want to install lush, make sure to set g:zenbones_compat = 1
+    -- In Vim, compat mode is turned on as Lush only works in Neovim.
+    dependencies = 'rktjmp/lush.nvim',
+    lazy = false,
+    priority = 1000,
+    -- you can set set configuration options here
+    config = function()
+      vim.cmd 'colorscheme neobones'
+      vim.o.background = 'light'
+      -- -- Set cursor style for different modes
+      -- vim.o.guicursor = 'n-v-c:block-Cursor,i-ci-ve:ver25-Cursor,r-cr:hor20,o:hor50'
+      -- -- Make sure the cursor stands out on light backgrounds
+      -- vim.api.nvim_set_hl(0, 'Cursor', { fg = '#ffffff', bg = '#000000' }) -- White text on black block
+
+      -- local function update_cursor_color()
+      --   local bg = vim.o.background -- "dark" or "light"
+      --   local cursor_bg = (bg == 'dark') and '#FFFFFF' or '#000000'
+      --   -- set Cursor highlight to solid block in opposite color
+      --   vim.api.nvim_set_hl(0, 'Cursor', { bg = cursor_bg, fg = 'NONE' })
+      -- end
+      -- update_cursor_color()
     end,
   },
   {
@@ -432,6 +482,11 @@ require('lazy').setup({
       hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
     end,
   },
+  -- {
+  --   -- you also have to install the firefox add-on , has security problems
+  --   'glacambre/firenvim',
+  --   build = ":call firenvim#install(0)"
+  -- },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --

@@ -117,7 +117,11 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
-    require('dap-python').setup '/home/manis/Documents/pyTests/debugPy/venvDebug/bin/python'
+    -- usecases conveos venv
+    -- require('dap-python').setup '/home/manis/Documents/conveos/use-cases/hotel-bookings/py_bookings/venv_bookings/bin/python'
+
+    -- Agents Course venv
+    require('dap-python').setup '/home/manis/Documents/python_stuff/CourseAgent/venv_hf/bin/python'
     require('dap').adapters['pwa-node'] = {
       type = 'server',
       host = 'localhost',
