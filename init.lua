@@ -243,6 +243,7 @@ end
 --   end,
 -- })
 vim.cmd 'set termguicolors'
+
 local notesPlugin = require 'plugins.notesPlugin'
 vim.api.nvim_create_user_command('OpenNotes', function()
   notesPlugin.create_floating_window()
@@ -395,26 +396,29 @@ require('lazy').setup({
     -- you can set set configuration options here
     config = function()
       -- 1) set the theme
+      vim.cmd 'set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175'
+
       vim.cmd 'colorscheme neobones'
       vim.o.background = 'light'
       local lush = require 'lush'
       local hsl = lush.hsl
-      local neo = require 'neobones'
-      print 'MY NIGGA'
+      local neo = require 'lualine.themes.neobones_light'
+      -- print 'MY NIGGA'
       local sea_foam = hsl(208, 100, 80) -- Vim has a mapping, <n>C-a and <n>C-x to
       local sea_crest = hsl(208, 90, 30) -- increment or decrement integers, or
       local sea_deep = hsl(208, 90, 10) -- you can just type them normally.
+      vim.cmd "hi cursor guibg='DarkGreen' guifg='LightGrey' "
 
       local spec = lush.extends({ neo }).with(function()
         return {
-          Cursor { fg = sea_foam, bg = sea_deep },
-          Comment { fg = sea_crest },
-          CursorLine { fg = sea_foam, bg = sea_deep },
+          Cursor { fg = hsl(208, 100, 80), bg = hsl(208, 90, 15) },
+          -- Comment { fg = sea_crest },
+          -- CursorLine { fg = sea_foam, bg = sea_deep },
         }
       end)
-
-      lush(spec)
-      print('After Specs : ', lush(spec))
+      --
+      return lush(spec)
+      -- print('After Specs : ', lush(spec))
     end,
   },
   -- {
