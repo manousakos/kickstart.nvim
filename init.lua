@@ -234,16 +234,15 @@ end
 -- end)
 
 -- AutoCMD for cursor color change n light themes
-vim.api.nvim_create_autocmd('ColorScheme', {
-  callback = function()
-    if vim.o.background == 'light' then
-      local cursorPlugin = require 'plugins.cursor_color_lush'
-      cursorPlugin.cursor()
-    end
-  end,
-})
-
-vim.api.nvim_create_autocmd('ColorScheme', o)
+-- vim.api.nvim_create_autocmd('ColorScheme', {
+--   callback = function()
+--     if vim.o.background == 'light' then
+--       local cursorPlugin = require 'plugins.cursor_color_lush'
+--       require 'lush'(cursorPlugin.cursor()) -- <--- this applies the highlights
+--     end
+--   end,
+-- })
+vim.cmd 'set termguicolors'
 local notesPlugin = require 'plugins.notesPlugin'
 vim.api.nvim_create_user_command('OpenNotes', function()
   notesPlugin.create_floating_window()
@@ -381,6 +380,11 @@ require('lazy').setup({
     end,
   },
   {
+    'rktjmp/lush.nvim',
+    lazy = false,
+    priority = 999,
+  },
+  {
     'zenbones-theme/zenbones.nvim',
     -- Optionally install Lush. Allows for more configuration or extending the colorscheme
     -- If you don't want to install lush, make sure to set g:zenbones_compat = 1
@@ -390,98 +394,105 @@ require('lazy').setup({
     priority = 1000,
     -- you can set set configuration options here
     config = function()
+      -- 1) set the theme
       vim.cmd 'colorscheme neobones'
       vim.o.background = 'light'
-      -- -- Set cursor style for different modes
-      -- vim.o.guicursor = 'n-v-c:block-Cursor,i-ci-ve:ver25-Cursor,r-cr:hor20,o:hor50'
-      -- -- Make sure the cursor stands out on light backgrounds
-      -- vim.api.nvim_set_hl(0, 'Cursor', { fg = '#ffffff', bg = '#000000' }) -- White text on black block
+      local lush = require 'lush'
+      local hsl = lush.hsl
+      local neo = require 'neobones'
+      print 'MY NIGGA'
+      local sea_foam = hsl(208, 100, 80) -- Vim has a mapping, <n>C-a and <n>C-x to
+      local sea_crest = hsl(208, 90, 30) -- increment or decrement integers, or
+      local sea_deep = hsl(208, 90, 10) -- you can just type them normally.
 
-      -- local function update_cursor_color()
-      --   local bg = vim.o.background -- "dark" or "light"
-      --   local cursor_bg = (bg == 'dark') and '#FFFFFF' or '#000000'
-      --   -- set Cursor highlight to solid block in opposite color
-      --   vim.api.nvim_set_hl(0, 'Cursor', { bg = cursor_bg, fg = 'NONE' })
-      -- end
-      -- update_cursor_color()
+      local spec = lush.extends({ neo }).with(function()
+        return {
+          Cursor { fg = sea_foam, bg = sea_deep },
+          Comment { fg = sea_crest },
+          CursorLine { fg = sea_foam, bg = sea_deep },
+        }
+      end)
+
+      lush(spec)
+      print('After Specs : ', lush(spec))
     end,
   },
-  {
-    'jake-stewart/multicursor.nvim',
-    branch = '1.0',
-    config = function()
-      local mc = require 'multicursor-nvim'
-      mc.setup()
-
-      local set = vim.keymap.set
-
-      -- Add or skip cursor above/below the main cursor.
-      set({ 'n', 'x' }, '<A-k>', function()
-        mc.lineAddCursor(-1)
-      end)
-      set({ 'n', 'x' }, '<A-j>', function()
-        mc.lineAddCursor(1)
-      end)
-      set({ 'n', 'x' }, '<leader><A-k>', function()
-        mc.lineSkipCursor(-1)
-      end)
-      set({ 'n', 'x' }, '<leader><A-j>', function()
-        mc.lineSkipCursor(1)
-      end)
-
-      -- Add or skip adding a new cursor by matching word/selection
-      set({ 'n', 'x' }, '<leader>n', function()
-        mc.matchAddCursor(1)
-      end)
-      set({ 'n', 'x' }, '<leader>s', function()
-        mc.matchSkipCursor(1)
-      end)
-      set({ 'n', 'x' }, '<leader>N', function()
-        mc.matchAddCursor(-1)
-      end)
-      set({ 'n', 'x' }, '<leader>S', function()
-        mc.matchSkipCursor(-1)
-      end)
-
-      -- Add and remove cursors with control + left click.
-      set('n', '<c-leftmouse>', mc.handleMouse)
-      set('n', '<c-leftdrag>', mc.handleMouseDrag)
-      set('n', '<c-leftrelease>', mc.handleMouseRelease)
-
-      -- Disable and enable cursors.
-      set({ 'n', 'x' }, '<c-q>', mc.toggleCursor)
-
-      -- Mappings defined in a keymap layer only apply when there are
-      -- multiple cursors. This lets you have overlapping mappings.
-      mc.addKeymapLayer(function(layerSet)
-        -- Select a different cursor as the main one.
-        layerSet({ 'n', 'x' }, '<left>', mc.prevCursor)
-        layerSet({ 'n', 'x' }, '<right>', mc.nextCursor)
-
-        -- Delete the main cursor.
-        layerSet({ 'n', 'x' }, '<leader>x', mc.deleteCursor)
-
-        -- Enable and clear cursors using escape.
-        layerSet('n', '<esc>', function()
-          if not mc.cursorsEnabled() then
-            mc.enableCursors()
-          else
-            mc.clearCursors()
-          end
-        end)
-      end)
-
-      -- Customize how cursors look.
-      local hl = vim.api.nvim_set_hl
-      hl(0, 'MultiCursorCursor', { reverse = true })
-      hl(0, 'MultiCursorVisual', { link = 'Visual' })
-      hl(0, 'MultiCursorSign', { link = 'SignColumn' })
-      hl(0, 'MultiCursorMatchPreview', { link = 'Search' })
-      hl(0, 'MultiCursorDisabledCursor', { reverse = true })
-      hl(0, 'MultiCursorDisabledVisual', { link = 'Visual' })
-      hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
-    end,
-  },
+  -- {
+  --   'jake-stewart/multicursor.nvim',
+  --   branch = '1.0',
+  --   config = function()
+  --     local mc = require 'multicursor-nvim'
+  --     mc.setup()
+  --
+  --     local set = vim.keymap.set
+  --
+  --     -- Add or skip cursor above/below the main cursor.
+  --     set({ 'n', 'x' }, '<A-k>', function()
+  --       mc.lineAddCursor(-1)
+  --     end)
+  --     set({ 'n', 'x' }, '<A-j>', function()
+  --       mc.lineAddCursor(1)
+  --     end)
+  --     set({ 'n', 'x' }, '<leader><A-k>', function()
+  --       mc.lineSkipCursor(-1)
+  --     end)
+  --     set({ 'n', 'x' }, '<leader><A-j>', function()
+  --       mc.lineSkipCursor(1)
+  --     end)
+  --
+  --     -- Add or skip adding a new cursor by matching word/selection
+  --     set({ 'n', 'x' }, '<leader>n', function()
+  --       mc.matchAddCursor(1)
+  --     end)
+  --     set({ 'n', 'x' }, '<leader>s', function()
+  --       mc.matchSkipCursor(1)
+  --     end)
+  --     set({ 'n', 'x' }, '<leader>N', function()
+  --       mc.matchAddCursor(-1)
+  --     end)
+  --     set({ 'n', 'x' }, '<leader>S', function()
+  --       mc.matchSkipCursor(-1)
+  --     end)
+  --
+  --     -- Add and remove cursors with control + left click.
+  --     set('n', '<c-leftmouse>', mc.handleMouse)
+  --     set('n', '<c-leftdrag>', mc.handleMouseDrag)
+  --     set('n', '<c-leftrelease>', mc.handleMouseRelease)
+  --
+  --     -- Disable and enable cursors.
+  --     set({ 'n', 'x' }, '<c-q>', mc.toggleCursor)
+  --
+  --     -- Mappings defined in a keymap layer only apply when there are
+  --     -- multiple cursors. This lets you have overlapping mappings.
+  --     mc.addKeymapLayer(function(layerSet)
+  --       -- Select a different cursor as the main one.
+  --       layerSet({ 'n', 'x' }, '<left>', mc.prevCursor)
+  --       layerSet({ 'n', 'x' }, '<right>', mc.nextCursor)
+  --
+  --       -- Delete the main cursor.
+  --       layerSet({ 'n', 'x' }, '<leader>x', mc.deleteCursor)
+  --
+  --       -- Enable and clear cursors using escape.
+  --       layerSet('n', '<esc>', function()
+  --         if not mc.cursorsEnabled() then
+  --           mc.enableCursors()
+  --         else
+  --           mc.clearCursors()
+  --         end
+  --       end)
+  --     end)
+  --
+  --     -- Customize how cursors look.
+  --     local hl = vim.api.nvim_set_hl
+  --     hl(0, 'MultiCursorCursor', { reverse = true })
+  --     hl(0, 'MultiCursorVisual', { link = 'Visual' })
+  --     hl(0, 'MultiCursorSign', { link = 'SignColumn' })
+  --     hl(0, 'MultiCursorMatchPreview', { link = 'Search' })
+  --     hl(0, 'MultiCursorDisabledCursor', { reverse = true })
+  --     hl(0, 'MultiCursorDisabledVisual', { link = 'Visual' })
+  --     hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
+  --   end,
+  -- },
   -- {
   --   -- you also have to install the firefox add-on , has security problems
   --   'glacambre/firenvim',
