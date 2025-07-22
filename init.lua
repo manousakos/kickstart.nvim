@@ -1,85 +1,16 @@
---[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
---]]
-
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+vim.keymap.set('x', '<leader>p', [["_dP]])
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
-
+vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -287,8 +218,8 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
-vim.keymap.set({ 'v', 'n' }, '<leader>l', '$', { desc = 'Move to the end of line' })
-vim.keymap.set({ 'v', 'n' }, '<leader>h', '^', { desc = 'Move to the start of line' })
+vim.keymap.set({ 'v', 'n' }, 'L', '$', { desc = 'Move to the end of line' })
+vim.keymap.set({ 'v', 'n' }, 'H', '^', { desc = 'Move to the start of line' })
 
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -376,8 +307,9 @@ require('lazy').setup({
     lazy = false,
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
-      -- require 'github-theme'
-      -- vim.cmd 'colorscheme github_dark_default'
+      require 'github-theme'
+      vim.cmd 'colorscheme github_light_default'
+      vim.cmd 'set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175'
     end,
   },
   {
@@ -394,109 +326,110 @@ require('lazy').setup({
     lazy = false,
     priority = 1000,
     -- you can set set configuration options here
+    -- config = function()
+    --   -- 1) set the theme
+    --   vim.cmd 'set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175'
+    --
+    --   vim.cmd 'colorscheme neobones'
+    --   vim.o.background = 'light'
+    --   local lush = require 'lush'
+    --   local hsl = lush.hsl
+    --   local neo = require 'lualine.themes.neobones_light'
+    --   -- print 'MY NIGGA'
+    --   local sea_foam = hsl(208, 100, 80) -- Vim has a mapping, <n>C-a and <n>C-x to
+    --   local sea_crest = hsl(208, 90, 30) -- increment or decrement integers, or
+    --   local sea_deep = hsl(208, 90, 10) -- you can just type them normally.
+    --   vim.cmd "hi cursor guibg='DarkGreen' guifg='LightGrey' "
+    --   vim.g.neobones = { darken_noncurrent_window = true }
+    --
+    --   local spec = lush.extends({ neo }).with(function()
+    --     return {
+    --       Cursor { fg = hsl(208, 100, 80), bg = hsl(208, 90, 15) },
+    --       -- Comment { fg = sea_crest },
+    --       -- CursorLine { fg = sea_foam, bg = sea_deep },
+    --     }
+    --   end)
+    --   --
+    --   return lush(spec)
+    --   -- print('After Specs : ', lush(spec))
+    -- end,
+  },
+  {
+    'jake-stewart/multicursor.nvim',
+    branch = '1.0',
     config = function()
-      -- 1) set the theme
-      vim.cmd 'set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175'
+      local mc = require 'multicursor-nvim'
+      mc.setup()
 
-      vim.cmd 'colorscheme neobones'
-      vim.o.background = 'light'
-      local lush = require 'lush'
-      local hsl = lush.hsl
-      local neo = require 'lualine.themes.neobones_light'
-      -- print 'MY NIGGA'
-      local sea_foam = hsl(208, 100, 80) -- Vim has a mapping, <n>C-a and <n>C-x to
-      local sea_crest = hsl(208, 90, 30) -- increment or decrement integers, or
-      local sea_deep = hsl(208, 90, 10) -- you can just type them normally.
-      vim.cmd "hi cursor guibg='DarkGreen' guifg='LightGrey' "
+      local set = vim.keymap.set
 
-      local spec = lush.extends({ neo }).with(function()
-        return {
-          Cursor { fg = hsl(208, 100, 80), bg = hsl(208, 90, 15) },
-          -- Comment { fg = sea_crest },
-          -- CursorLine { fg = sea_foam, bg = sea_deep },
-        }
+      -- Add or skip cursor above/below the main cursor.
+      set({ 'n', 'x' }, '<A-k>', function()
+        mc.lineAddCursor(-1)
       end)
-      --
-      return lush(spec)
-      -- print('After Specs : ', lush(spec))
+      set({ 'n', 'x' }, '<A-j>', function()
+        mc.lineAddCursor(1)
+      end)
+      set({ 'n', 'x' }, '<leader><A-k>', function()
+        mc.lineSkipCursor(-1)
+      end)
+      set({ 'n', 'x' }, '<leader><A-j>', function()
+        mc.lineSkipCursor(1)
+      end)
+
+      -- Add or skip adding a new cursor by matching word/selection
+      set({ 'n', 'x' }, '<leader>n', function()
+        mc.matchAddCursor(1)
+      end)
+      set({ 'n', 'x' }, '<leader>s', function()
+        mc.matchSkipCursor(1)
+      end)
+      set({ 'n', 'x' }, '<leader>N', function()
+        mc.matchAddCursor(-1)
+      end)
+      set({ 'n', 'x' }, '<leader>S', function()
+        mc.matchSkipCursor(-1)
+      end)
+
+      -- Add and remove cursors with control + left click.
+      set('n', '<c-leftmouse>', mc.handleMouse)
+      set('n', '<c-leftdrag>', mc.handleMouseDrag)
+      set('n', '<c-leftrelease>', mc.handleMouseRelease)
+
+      -- Disable and enable cursors.
+      set({ 'n', 'x' }, '<c-q>', mc.toggleCursor)
+
+      -- Mappings defined in a keymap layer only apply when there are
+      -- multiple cursors. This lets you have overlapping mappings.
+      mc.addKeymapLayer(function(layerSet)
+        -- Select a different cursor as the main one.
+        layerSet({ 'n', 'x' }, '<left>', mc.prevCursor)
+        layerSet({ 'n', 'x' }, '<right>', mc.nextCursor)
+
+        -- Delete the main cursor.
+        layerSet({ 'n', 'x' }, '<leader>x', mc.deleteCursor)
+
+        -- Enable and clear cursors using escape.
+        layerSet('n', '<esc>', function()
+          if not mc.cursorsEnabled() then
+            mc.enableCursors()
+          else
+            mc.clearCursors()
+          end
+        end)
+      end)
+
+      -- Customize how cursors look.
+      local hl = vim.api.nvim_set_hl
+      hl(0, 'MultiCursorCursor', { reverse = true })
+      hl(0, 'MultiCursorVisual', { link = 'Visual' })
+      hl(0, 'MultiCursorSign', { link = 'SignColumn' })
+      hl(0, 'MultiCursorMatchPreview', { link = 'Search' })
+      hl(0, 'MultiCursorDisabledCursor', { reverse = true })
+      hl(0, 'MultiCursorDisabledVisual', { link = 'Visual' })
+      hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
     end,
   },
-  -- {
-  --   'jake-stewart/multicursor.nvim',
-  --   branch = '1.0',
-  --   config = function()
-  --     local mc = require 'multicursor-nvim'
-  --     mc.setup()
-  --
-  --     local set = vim.keymap.set
-  --
-  --     -- Add or skip cursor above/below the main cursor.
-  --     set({ 'n', 'x' }, '<A-k>', function()
-  --       mc.lineAddCursor(-1)
-  --     end)
-  --     set({ 'n', 'x' }, '<A-j>', function()
-  --       mc.lineAddCursor(1)
-  --     end)
-  --     set({ 'n', 'x' }, '<leader><A-k>', function()
-  --       mc.lineSkipCursor(-1)
-  --     end)
-  --     set({ 'n', 'x' }, '<leader><A-j>', function()
-  --       mc.lineSkipCursor(1)
-  --     end)
-  --
-  --     -- Add or skip adding a new cursor by matching word/selection
-  --     set({ 'n', 'x' }, '<leader>n', function()
-  --       mc.matchAddCursor(1)
-  --     end)
-  --     set({ 'n', 'x' }, '<leader>s', function()
-  --       mc.matchSkipCursor(1)
-  --     end)
-  --     set({ 'n', 'x' }, '<leader>N', function()
-  --       mc.matchAddCursor(-1)
-  --     end)
-  --     set({ 'n', 'x' }, '<leader>S', function()
-  --       mc.matchSkipCursor(-1)
-  --     end)
-  --
-  --     -- Add and remove cursors with control + left click.
-  --     set('n', '<c-leftmouse>', mc.handleMouse)
-  --     set('n', '<c-leftdrag>', mc.handleMouseDrag)
-  --     set('n', '<c-leftrelease>', mc.handleMouseRelease)
-  --
-  --     -- Disable and enable cursors.
-  --     set({ 'n', 'x' }, '<c-q>', mc.toggleCursor)
-  --
-  --     -- Mappings defined in a keymap layer only apply when there are
-  --     -- multiple cursors. This lets you have overlapping mappings.
-  --     mc.addKeymapLayer(function(layerSet)
-  --       -- Select a different cursor as the main one.
-  --       layerSet({ 'n', 'x' }, '<left>', mc.prevCursor)
-  --       layerSet({ 'n', 'x' }, '<right>', mc.nextCursor)
-  --
-  --       -- Delete the main cursor.
-  --       layerSet({ 'n', 'x' }, '<leader>x', mc.deleteCursor)
-  --
-  --       -- Enable and clear cursors using escape.
-  --       layerSet('n', '<esc>', function()
-  --         if not mc.cursorsEnabled() then
-  --           mc.enableCursors()
-  --         else
-  --           mc.clearCursors()
-  --         end
-  --       end)
-  --     end)
-  --
-  --     -- Customize how cursors look.
-  --     local hl = vim.api.nvim_set_hl
-  --     hl(0, 'MultiCursorCursor', { reverse = true })
-  --     hl(0, 'MultiCursorVisual', { link = 'Visual' })
-  --     hl(0, 'MultiCursorSign', { link = 'SignColumn' })
-  --     hl(0, 'MultiCursorMatchPreview', { link = 'Search' })
-  --     hl(0, 'MultiCursorDisabledCursor', { reverse = true })
-  --     hl(0, 'MultiCursorDisabledVisual', { link = 'Visual' })
-  --     hl(0, 'MultiCursorDisabledSign', { link = 'SignColumn' })
-  --   end,
-  -- },
   -- {
   --   -- you also have to install the firefox add-on , has security problems
   --   'glacambre/firenvim',

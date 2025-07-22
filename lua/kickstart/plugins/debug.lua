@@ -24,7 +24,7 @@ return {
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
     'mfussenegger/nvim-dap-python',
-    'microsoft/vscode-node-debug',
+    -- 'microsoft/vscode-node-debug',
   },
   keys = function(_, keys)
     local dap = require 'dap'
@@ -78,7 +78,7 @@ return {
       -- online, please don't ask me how to install them :)
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
-        'delve',
+        -- 'delve',
         'python',
       },
     }
@@ -109,12 +109,36 @@ return {
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
-    -- Install golang specific config
-    require('dap-go').setup {
-      delve = {
-        -- On Windows delve must be run attached or it crashes.
-        -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
-        detached = vim.fn.has 'win32' == 0,
+    dap.adapters.node2 = {
+      type = 'executable',
+      command = 'node',
+      args = { os.getenv 'HOME' .. '/.local/share/nvim/mason/packages/node-debug2-adapter/out/src/nodeDebug.js' },
+    }
+
+    dap.configurations.javascript = {
+      {
+        type = 'node2',
+        request = 'launch',
+        name = 'Launch Program',
+        program = '${file}',
+        cwd = vim.fn.getcwd(),
+        sourceMaps = true,
+        protocol = 'inspector',
+        console = 'integratedTerminal',
+      },
+    }
+
+    dap.configurations.typescript = {
+      {
+        type = 'node2',
+        request = 'launch',
+        name = 'Launch TS via ts-node',
+        program = '${file}',
+        cwd = vim.fn.getcwd(),
+        runtimeExecutable = 'ts-node',
+        sourceMaps = true,
+        protocol = 'inspector',
+        console = 'integratedTerminal',
       },
     }
     -- usecases conveos venv
@@ -122,24 +146,24 @@ return {
 
     -- Agents Course venv
     require('dap-python').setup '/home/manis/Documents/python_stuff/CourseAgent/venv_hf/bin/python'
-    require('dap').adapters['pwa-node'] = {
-      type = 'server',
-      host = 'localhost',
-      port = '${port}',
-      executable = {
-        command = 'node',
-        -- 💀 Make sure to update this path to point to your installation
-        args = { '/home/testuser/Documents/Debug-Servers/js-debug/src/dapDebugServer.js', '${port}' },
-      },
-    }
-    require('dap').configurations.javascript = {
-      {
-        type = 'pwa-node',
-        request = 'launch',
-        name = 'Launch file',
-        program = '${file}',
-        cwd = '${workspaceFolder}',
-      },
-    }
+    -- require('dap').adapters['pwa-node'] = {
+    --   type = 'server',
+    --   host = 'localhost',
+    --   port = '${port}',
+    --   executable = {
+    --     command = 'node',
+    --     -- 💀 Make sure to update this path to point to your installation
+    --     args = { '/home/manis/.config/nvim/js-debug-dap-v1.100.1/js-debug/src', '${port}' },
+    --   },
+    -- }
+    -- require('dap').configurations.javascript = {
+    --   {
+    --     type = 'pwa-node',
+    --     request = 'launch',
+    --     name = 'Launch file',
+    --     program = '${file}',
+    --     cwd = '${workspaceFolder}',
+    --   },
+    -- }
   end,
 }

@@ -6,7 +6,12 @@ This is a note taking md file where i will keep my notes, this will need a more 
 
 #### Keymaps
 * **RENAME VARIABLE THROUGH FILE** : `<leader>rn` while cursor is on variable
-
+* **Uppercase/Lowercase** : visual select the text and press 'U' for Uppercase and 'u' for lowercase
+* **WINDOW RESIZING**: see :h window-resize
+  * Maximise window : CTRL+W _
+  * Raise window ver: CTRL+W -
+  * Make windows equal (all): CTRL+W =
+* **Variable/Function definitions** = < K > over the word ( capital K)
 ## UBUNTU
 
 #### SCREEN
