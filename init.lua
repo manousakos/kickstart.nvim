@@ -8,6 +8,11 @@ vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.keymap.set('x', '<leader>p', [["_dP]])
+
+-- recursive line indentation
+vim.keymap.set('v', '>', '>gv', { noremap = true, silent = true })
+vim.keymap.set('v', '<', '<gv', { noremap = true, silent = true })
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
@@ -188,6 +193,13 @@ vim.api.nvim_create_user_command('OllamaWin', function()
   ollamaWin.create_floating_term()
   vim.cmd ':te ollama run qwen2.5-coder:3b' --- WANRING you must have ollama alias if you are using it in a docker container
 end, {})
+
+vim.api.nvim_create_user_command('MistralWin', function()
+  ollamaWin.create_floating_term()
+  vim.cmd ':te python3 mistralAPI.py'
+  -- vim.cmd ':wincmd q'
+end, {})
+vim.api.nvim_set_keymap('n', '<leader>nm', ':MistralWin<CR>', { desc = 'Mistral conversation term', noremap = true, silent = true })
 
 vim.api.nvim_set_keymap('n', '<leader>no', ':OllamaWin<CR>', { desc = 'Ollama float terminal', noremap = true, silent = true })
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -567,7 +579,11 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
-        -- pickers = {}
+        pickers = {
+          colorscheme = {
+            enable_preview = true,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -1061,6 +1077,38 @@ require('lazy').setup({
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
+  },
+  {
+    'mbbill/undotree',
+
+    config = function()
+      vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
+    end,
+  },
+  {
+    'folke/noice.nvim',
+    event = 'VeryLazy',
+    opts = {
+      -- add any options here
+      -- presets = {
+      --   bottom_search = true, -- use a classic bottom cmdline for search
+      --   command_palette = true, -- position the cmdline and popupmenu together
+      --   long_message_to_split = true, -- long messages will be sent to a split
+      --   inc_rename = false, -- enables an input dialog for inc-rename.nvim
+      --   lsp_doc_border = false, -- add a border to hover docs and signature help
+      -- },
+      messages = {
+        enabled = false,
+      },
+    },
+    dependencies = {
+      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+      'MunifTanjim/nui.nvim',
+      -- OPTIONAL:
+      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   If not available, we use `mini` as the fallback
+      'rcarriga/nvim-notify',
+    },
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',

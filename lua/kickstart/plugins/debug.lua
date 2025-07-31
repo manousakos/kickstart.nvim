@@ -109,6 +109,38 @@ return {
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
+    --/home/manis/local-lua-debugger-vscode/extension
+    dap.adapters['local-lua'] = {
+      type = 'executable',
+      command = 'node',
+      args = {
+        '~/local-lua-debugger-vscode/extension/debugAdapter.js',
+      },
+      enrich_config = function(config, on_config)
+        if not config['extensionPath'] then
+          local c = vim.deepcopy(config)
+          -- 💀 If this is missing or wrong you'll see
+          -- "module 'lldebugger' not found" errors in the dap-repl when trying to launch a debug session
+          c.extensionPath = '/home/manis/local-lua-debugger-vscode/'
+          on_config(c)
+        else
+          on_config(config)
+        end
+      end,
+    }
+
+    dap.configurations.lua = {
+      {
+        type = 'local-lua',
+        request = 'launch',
+        name = 'launch program',
+        program = {
+          lua = 'lua',
+          file = '${file}',
+        },
+      },
+    }
+
     dap.adapters.node2 = {
       type = 'executable',
       command = 'node',

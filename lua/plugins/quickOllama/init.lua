@@ -6,7 +6,7 @@ function M.create_floating_term()
   end
 
   local buf = vim.api.nvim_create_buf(false, true) -- No file, scratch buffer
-  local win = vim.api.nvim_open_win(buf, true, { relative = 'win', row = 0, col = 0, height = 10, width = 50, border = 'rounded' })
+  local win = vim.api.nvim_open_win(buf, true, { relative = 'win', row = 0, col = 0, height = 20, width = 60, border = 'rounded' })
   local term = vim.api.nvim_open_term(buf, {})
   -- local wow = vim.api.nvim_open_win
 
