@@ -199,6 +199,8 @@ vim.api.nvim_create_user_command('MistralWin', function()
   vim.cmd ':te python3 mistralAPI.py'
   -- vim.cmd ':wincmd q'
 end, {})
+
+require 'lua.plugins.floaterminal.floaterminal'
 vim.api.nvim_set_keymap('n', '<leader>nm', ':MistralWin<CR>', { desc = 'Mistral conversation term', noremap = true, silent = true })
 
 vim.api.nvim_set_keymap('n', '<leader>no', ':OllamaWin<CR>', { desc = 'Ollama float terminal', noremap = true, silent = true })
@@ -1099,6 +1101,11 @@ require('lazy').setup({
       -- },
       messages = {
         enabled = false,
+      },
+      {
+        notify = {
+          enabled = false,
+        },
       },
     },
     dependencies = {
