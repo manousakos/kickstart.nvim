@@ -45,7 +45,20 @@ local toggle_terminal = function()
   if not vim.api.nvim_win_is_valid(state.floating.win) then
     state.floating = create_floating_window { buf = state.floating.buf }
     if vim.bo[state.floating.buf].buftype ~= 'terminal' then
-      vim.cmd ':te lua /home/manis/Projects/mistral-term-agent/main.lua'
+      vim.cmd.terminal()
+      vim.cmd 'startinsert'
+    end
+  else
+    vim.api.nvim_win_hide(state.floating.win)
+  end
+end
+
+local toggle_terminal_mistral = function()
+  if not vim.api.nvim_win_is_valid(state.floating.win) then
+    state.floating = create_floating_window { buf = state.floating.buf }
+    if vim.bo[state.floating.buf].buftype ~= 'terminal' then
+      vim.cmd ':te lua ~/.config/nvim/mistral-term-agent/main.lua '
+      vim.cmd 'startinsert'
     end
   else
     vim.api.nvim_win_hide(state.floating.win)
@@ -55,3 +68,4 @@ end
 -- Example usage:
 -- Create a floating window with default dimensions
 vim.api.nvim_create_user_command('Floaterminal', toggle_terminal, {})
+vim.api.nvim_create_user_command('MistralTerm', toggle_terminal_mistral, {})

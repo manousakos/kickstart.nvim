@@ -13,6 +13,23 @@ vim.keymap.set('x', '<leader>p', [["_dP]])
 vim.keymap.set('v', '>', '>gv', { noremap = true, silent = true })
 vim.keymap.set('v', '<', '<gv', { noremap = true, silent = true })
 
+require 'plugins.floaterminal.floaterminal'
+vim.api.nvim_set_keymap('n', 'te', ':Floaterminal<CR>', { desc = 'A floating window running a term', noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'tm', ':MistralTerm<CR>', { desc = 'A floating window running Mistral agent', noremap = true, silent = true })
+
+-- Make inactive windows darker
+vim.api.nvim_create_autocmd('WinEnter', {
+  callback = function()
+    vim.wo.winhighlight = 'Normal:Normal,NormalNC:NormalNC'
+  end,
+})
+
+vim.api.nvim_create_autocmd({ 'VimEnter', 'WinEnter', 'WinLeave' }, {
+  callback = function()
+    vim.cmd 'highlight NormalNC guibg=#c2c2c4' -- slightly darker gray
+  end,
+})
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
@@ -189,18 +206,18 @@ end, {})
 vim.api.nvim_set_keymap('n', '<leader>nn', ':OpenNotes<CR>', { desc = 'Open Notes.md', noremap = true, silent = true })
 
 local ollamaWin = require 'plugins.quickOllama'
-vim.api.nvim_create_user_command('OllamaWin', function()
-  ollamaWin.create_floating_term()
-  vim.cmd ':te ollama run qwen2.5-coder:3b' --- WANRING you must have ollama alias if you are using it in a docker container
-end, {})
+-- vim.api.nvim_create_user_command('OllamaWin', function()
+--   ollamaWin.create_floating_term()
+--   vim.cmd ':te ollama run qwen2.5-coder:3b' --- WANRING you must have ollama alias if you are using it in a docker container
+-- end, {})
 
 vim.api.nvim_create_user_command('MistralWin', function()
   ollamaWin.create_floating_term()
-  vim.cmd ':te python3 mistralAPI.py'
+  vim.cmd ':te lua ~/.config/nvim/mistral-term-agent/main.lua'
   -- vim.cmd ':wincmd q'
 end, {})
 
-require 'lua.plugins.floaterminal.floaterminal'
+-- require 'lua.plugins.floaterminal.floaterminal'
 vim.api.nvim_set_keymap('n', '<leader>nm', ':MistralWin<CR>', { desc = 'Mistral conversation term', noremap = true, silent = true })
 
 vim.api.nvim_set_keymap('n', '<leader>no', ':OllamaWin<CR>', { desc = 'Ollama float terminal', noremap = true, silent = true })
@@ -322,7 +339,7 @@ require('lazy').setup({
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       require 'github-theme'
-      vim.cmd 'colorscheme github_light_default'
+      vim.cmd 'colorscheme github_light_high_contrast'
       vim.cmd 'set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175'
     end,
   },
