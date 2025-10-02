@@ -24,15 +24,31 @@ vim.api.nvim_create_autocmd('WinEnter', {
   end,
 })
 
+vim.api.nvim_create_autocmd('WinEnter', {
+  callback = function()
+    vim.wo.winhighlight = 'Normal:Normal,NormalNC:NormalNC'
+  end,
+})
+
 vim.api.nvim_create_autocmd({ 'VimEnter', 'WinEnter', 'WinLeave' }, {
   callback = function()
     vim.cmd 'highlight NormalNC guibg=#c2c2c4' -- slightly darker gray
   end,
 })
 
--- Set to true if you have a Nerd Font installed and selected in the terminal
+-- future terminal paster. Having issues with the Mistral AI terminal window on paste with mutliple lines (new line char)
+vim.keymap.set('n', '<leader>tp', function()
+  local regCont = string.gsub(vim.fn.getreg '+', '\n', '\\')
+  vim.fn.setreg('"', regCont)
+  vim.fn.setreg('0', regCont)
+  vim.fn.setreg('+', regCont)
+  vim.fn.setreg('*', regCont)
+  vim.cmd 'normal! p'
+end)
+
+--leader- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
-vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
+-- vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -621,7 +637,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>m', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
